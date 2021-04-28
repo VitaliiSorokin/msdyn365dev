@@ -8,66 +8,32 @@ namespace ConsoleApp1
 {
     class Helpers
     {
-        //public static void DeleteWrongCars()
-        //{
-        //    CrmServiceClient crmSvc = new CrmServiceClient(ConfigurationManager.ConnectionStrings["MyCRMServer"].ConnectionString);
-
-        //    string query = @"
-        //    <fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-        //        <entity name='new_car'>
-        //        <attribute name='new_vin' />
-        //        <attribute name='new_purchase' />
-        //        <attribute name='new_productiondate' />
-        //        <attribute name='new_carmodel' />
-        //        <attribute name='new_carmanufacturer' />
-        //        <attribute name='new_carclass' />
-        //        <attribute name='new_carid' />
-        //        <order attribute='new_vin' descending='false' />
-        //        <filter type='and'>
-        //            <condition attribute='new_productiondate' operator='gt' valueof='new_purchase'/>
-        //        </filter>
-        //        </entity>
-        //    </fetch>";
-
-        //    EntityCollection entityCollection = crmSvc.RetrieveMultiple(new FetchExpression(query));
-
-        //    int i = 0;
-        //    foreach (Entity car in entityCollection.Entities)
-        //    {
-        //        i++;
-        //        //crmSvc.Delete("new_car", new Guid(car.Attributes["new_carid"].ToString()));
-        //        Console.WriteLine(car.Attributes["new_vin"].ToString());
-        //        Console.WriteLine(car.Attributes["new_purchase"].ToString());
-        //        Console.WriteLine(car.Attributes["new_productiondate"].ToString());
-        //    }
-        //    Console.WriteLine(i);
-        //    Console.Read();
-        //} // TODO: to delete?
-
-        public static DateTime GenerateDateInRange(DateTime startDate, DateTime endDate, Random rnd)
+        public static DateTime GenerateDateInRange(DateTime startDate, DateTime endDate, Random random)
         {
             TimeSpan timeSpan = endDate - startDate;
-            TimeSpan newSpan = new TimeSpan(0, rnd.Next(0, (int)timeSpan.TotalMinutes), 0);
-            return startDate + newSpan;
+            TimeSpan randomTimeSpan = new TimeSpan(0, random.Next(0, (int)timeSpan.TotalMinutes), 0);
+            return startDate + randomTimeSpan;
         }
 
-        public static TimeSpan GenerateRentDuraton(Random rnd)
+        public static TimeSpan GenerateRentDuraton(Random random)
         {
-            int days = rnd.Next(Constants.RentDuration.Min, Constants.RentDuration.Max);
-            int hours = rnd.Next(0, 24);
+            int days = random.Next(Constants.RentDuration.Min, Constants.RentDuration.Max);
+            int hours = random.Next(0, 24);
             return new TimeSpan(days, hours, 0, 0);
         }
 
-        public static Guid GetCarClassId(List<new_carclass> classes, Random rnd)
+        public static Guid GetCarClassId(List<new_carclass> classes, Random random)
         {
-            int index = rnd.Next(classes.Count);
+            int index = random.Next(classes.Count);
             return classes[index].Id;
         }
 
-        public static Guid GetCarIdByClassId(Guid classId, List<new_car> cars, Random rnd)
+        public static Guid GetCarIdByClassId(Guid classId, List<new_car> cars, Random random)
         {
-            List<new_car> filteredCars = (List<new_car>)cars.Where(c => c.new_CarClass.Id.Equals(classId)).ToList();
-            int index = rnd.Next(filteredCars.Count);
+            List<new_car> filteredCars = (List<new_car>)cars
+                .Where(c => c.new_CarClass.Id.Equals(classId))
+                .ToList();
+            int index = random.Next(filteredCars.Count);
             return filteredCars[index].Id;
         }
 
@@ -77,15 +43,15 @@ namespace ConsoleApp1
             return contacts[index].Id;
         }
 
-        public static int GetLocationValue(Random rnd)
+        public static int GetLocationValue(Random random)
         {
-            List<int> locValues = new List<int>() {
+            List<int> locationValues = new List<int>() {
                 Constants.Locations.Airport,
                 Constants.Locations.CityCenter,
                 Constants.Locations.Office
             };
-            int index = rnd.Next(locValues.Count);
-            return locValues[index];
+            int index = random.Next(locationValues.Count);
+            return locationValues[index];
         }
     }
 }

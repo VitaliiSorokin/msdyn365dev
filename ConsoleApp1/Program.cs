@@ -47,8 +47,8 @@ namespace ConsoleApp1
                         Guid classId = Helpers.GetCarClassId(carClasses, random);
                         Guid carId = Helpers.GetCarIdByClassId(classId, cars, random);
                         Guid customerId = Helpers.GetCustomerId(contacts, random);
-                        int pickupLocValue = Helpers.GetLocationValue(random);
-                        int returnLocValue = Helpers.GetLocationValue(random);
+                        int pickupLocationValue = Helpers.GetLocationValue(random);
+                        int returnLocationValue = Helpers.GetLocationValue(random);
 
                         new_rent rent = new new_rent
                         {
@@ -57,8 +57,8 @@ namespace ConsoleApp1
                             new_CarClass = new EntityReference(new_carclass.EntityLogicalName, classId),
                             new_Car = new EntityReference(new_car.EntityLogicalName, carId),
                             new_Customer = new EntityReference(Contact.EntityLogicalName, customerId),
-                            new_PickupLocation = new OptionSetValue(pickupLocValue),
-                            new_ReturnLocation = new OptionSetValue(returnLocValue)
+                            new_PickupLocation = new OptionSetValue(pickupLocationValue),
+                            new_ReturnLocation = new OptionSetValue(returnLocationValue)
                         };
 
                         var createRequest = new CreateRequest() { Target = rent };
@@ -231,9 +231,9 @@ namespace ConsoleApp1
                         multipleRequest.Requests.Add(updateRentRequest);
                     }
 
-                    var mltplResponse = (ExecuteMultipleResponse)crmSvc.Execute(multipleRequest);
+                    var multipleResponse = (ExecuteMultipleResponse)crmSvc.Execute(multipleRequest);
 
-                    foreach (var r in mltplResponse.Responses)
+                    foreach (var r in multipleResponse.Responses)
                     {
                         if (r.Response != null)
                         {
