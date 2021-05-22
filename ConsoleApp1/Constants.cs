@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleApp1
+﻿namespace ConsoleApp1
 {
     class Constants
     {
-        public const int TotalRecords = 20;
+        public const int TotalRecords = 40000;
+        public const int BatchSize = 1000;
 
         public static class Locations
         {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xrm.Sdk;
 
 namespace ConsoleApp1
 {
@@ -22,10 +21,10 @@ namespace ConsoleApp1
             return new TimeSpan(days, hours, 0, 0);
         }
 
-        public static Guid GetCarClassId(List<new_carclass> classes, Random random)
+        public static new_carclass GetCarClass(List<new_carclass> classes, Random random)
         {
             int index = random.Next(classes.Count);
-            return classes[index].Id;
+            return classes[index];
         }
 
         public static Guid GetCarIdByClassId(Guid classId, List<new_car> cars, Random random)
@@ -52,6 +51,13 @@ namespace ConsoleApp1
             };
             int index = random.Next(locationValues.Count);
             return locationValues[index];
+        }
+
+        public static Money GetPriceForRent(TimeSpan duration, new_carclass carClass)
+        {
+            int pricePerDay = Decimal.ToInt32(carClass.new_Price.Value);
+            int totalDays = duration.Days;
+            return new Money(pricePerDay * totalDays);
         }
     }
 }

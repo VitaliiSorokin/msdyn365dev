@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generator.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Program.cs" />
