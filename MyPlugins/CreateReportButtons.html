@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script>
+        function getTodayDate() {
+            var today = new Date();
+            return (today.getMonth() + 1) + '/' + today.getDate() + "/" + today.getFullYear();
+        }
+
+        function createReport(isPickup) {
+            function updateRent(obj) {
+                if (obj.savedEntityReference[0] != null) {
+                    var actualReportTimeFieldName = isPickup ? "new_actualpickup" : "new_actualreturn";
+                    var reportSchemaName = isPickup ? "new_PickupReport@odata.bind" : "new_ReturnReport@odata.bind";
+                    var reportId = (obj.savedEntityReference[0].id || "").slice(1, -1);
+
+                    var rentParameters = {};
+                    rentParameters[actualReportTimeFieldName] = new Date();
+                    rentParameters[reportSchemaName] = "/new_cartransferreports(" + reportId + ")"
+                    window.parent.Xrm.WebApi.updateRecord("new_rent", rentId, rentParameters).then(
+                        function success(result) {
+                            window.parent.Xrm.Page.data.refresh(true);
+                            var btnId = isPickup ? "pickup" : "return";
+                            document.getElementById(btnId).style.visibility = "hidden";
+
+                        },
+                        function (error) {
+                            console.log(error.message);
+                        }
+                    );
+                }
+            }
+
+            var rentId = window.parent.Xrm.Page.data.entity.getId();
+
+            if (rentId) {
+                var reportTypeValue = isPickup ? "1" : "0";
+                var reportName = isPickup ? "Pickup " : "Return ";
+                var date = getTodayDate();
+
+                var entityFormOptions = {};
+                entityFormOptions["entityName"] = "new_cartransferreport";
+                entityFormOptions["useQuickCreateForm"] = true;
+
+                var formParameters = {};
+                formParameters["new_date"] = date;
+                formParameters["new_type"] = reportTypeValue;
+
+                var car = window.parent.Xrm.Page.getAttribute("new_car").getValue();
+                if (car != null && car[0] != null) {
+                    formParameters["new_name"] = reportName + car[0].name + " on " + date;
+                    formParameters["new_car"] = car[0].id;
+                    formParameters["new_carname"] = car[0].name;
+                    formParameters["new_cartype"] = car[0].entityType;
+                }
+
+                window.parent.Xrm.Navigation.openForm(entityFormOptions, formParameters).then(
+                    updateRent,
+                    function (error) {
+                        console.log(error);
+                    });
+            } else {
+                var notification =
+                {
+                    type: 2,
+                    level: 3,
+                    message: "Report cannot be created. Please SAVE the record to proceed.",
+                    showCloseButton: true
+                }
+
+                window.parent.Xrm.App.addGlobalNotification(notification).then(
+                    function success(result) {
+                        console.log("Notification created with ID: " + result);
+                    },
+                    function (error) {
+                        console.log(error.message);
+                    }
+                );
+            }
+        }
+    </script>
+</head>
+<body>
+    <button id="pickup" onclick="createReport(true)">Create Pickup Report</button>
+    <button id="return" onclick="createReport(false)">Create Return Report</button>
+    <script>
+        if (window.parent.Xrm.Page.getAttribute("new_pickupreport").getValue() != null) {
+            document.getElementById("pickup").style.visibility = "hidden";
+        }
+        if (window.parent.Xrm.Page.getAttribute("new_returnreport").getValue() != null) {
+            document.getElementById("return").style.visibility = "hidden";
+        }
+    </script>
+</body>
+</html>
